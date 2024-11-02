@@ -44,9 +44,3 @@ def read_storage_tanks_from_csv():
             storage_tanks.append(tank)
     return storage_tanks
 
-# Usage example
-  # replace with your actual filename
-tanks = read_storage_tanks_from_csv()
-for tank in tanks:
-    print(tank)
-
