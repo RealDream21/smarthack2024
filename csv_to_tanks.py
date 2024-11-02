@@ -1,5 +1,10 @@
 import csv
 import os
+import requests
+
+class SessionError(Exception):
+    """Custom exception for session-related errors."""
+    pass
 
 class StorageTank:
     def __init__(self, id, name, capacity, max_input, max_output, overflow_penalty, underflow_penalty, over_input_penalty, over_output_penalty, initial_stock, node_type):
@@ -14,6 +19,8 @@ class StorageTank:
         self.over_output_penalty = float(over_output_penalty)
         self.initial_stock = float(initial_stock)
         self.node_type = node_type
+
+        self.current_stock = float(initial_stock)
 
     def __repr__(self):
         return f"StorageTank(id={self.id}, name={self.name}, capacity={self.capacity}, initial_stock={self.initial_stock})"
@@ -39,8 +46,38 @@ def read_storage_tanks_from_csv():
                 over_input_penalty=row['over_input_penalty'],
                 over_output_penalty=row['over_output_penalty'],
                 initial_stock=row['initial_stock'],
-                node_type=row['node_type']
+                node_type=row['node_type'],
             )
             storage_tanks.append(tank)
     return storage_tanks
 
+
+def get_tank_by_name(storage_tanks, name):
+    for tank in storage_tanks:
+        if tank.name == name:
+            return tank
+    return None
+
+def change_all_tank_stock(storage_tanks, SESSION_ID):
+    url = "http://localhost:8080/api/v1/play/getNodesByType"
+
+    headers= {
+        "accept": "*/*",
+        "API-KEY": "7bcd6334-bc2e-4cbf-b9d4-61cb9e868869",
+        "SESSION-ID": SESSION_ID,
+        "NODE_TYPE": "STORAGE_TANK"
+    }
+
+    response = requests.post(url, headers=headers, data='')
+
+    if response.status_code != 200:
+        raise SessionError(f"Failed to start session: {response.status_code} - {response.text}")
+    
+    data = response.json()
+
+    for node in data.get('nodeStatusDtos', []):
+        name = node.get("name")
+        stock = node.get("stock")
+
+        tanks = get_tank_by_name(storage_tanks, name)
+        tanks.current_stock = stock

@@ -1,6 +1,13 @@
 import pandas as pd
 from typing import List
 import os
+from global_variables import WEBSITE, API_KEY
+import requests
+
+class SessionError(Exception):
+    """Custom exception for session-related errors."""
+    pass
+
 
 class Refinery:
     def __init__(self, id, name, capacity, max_output, production, overflow_penalty, underflow_penalty, 
@@ -17,6 +24,9 @@ class Refinery:
         self.production_co2 = float(production_co2)
         self.initial_stock = int(initial_stock)
         self.node_type = node_type
+
+        #add current stock attribute  
+        self.current_stock = int(initial_stock)
 
     def __repr__(self):
         return (
@@ -54,3 +64,42 @@ def read_refineries_from_csv(filepath = None):
     
     return refineries
 
+def get_refinery_by_name(refineries: List[Refinery], name: str) -> Refinery:
+    for refinery in refineries:
+        if refinery.name == name:
+            return refinery
+    return None
+
+# this function calls the api and gets the current stock for each refinery
+
+
+def change_all_refinery_stock(refineries, SESSION_ID):
+    url = "http://localhost:8080/api/v1/play/getNodesByType"
+
+    headers= {
+        "accept": "*/*",
+        "API-KEY": "7bcd6334-bc2e-4cbf-b9d4-61cb9e868869",
+        "SESSION-ID": SESSION_ID,
+        "NODE_TYPE": "REFINERY"
+    }
+
+    response = requests.post(url, headers=headers, data='')
+
+    if response.status_code != 200:
+        raise SessionError(f"Failed to start session: {response.status_code} - {response.text}")
+    
+    data = response.json()
+
+    for node in data.get('nodeStatusDtos', []):
+        name = node.get("name")
+        stock = node.get("stock")
+
+        refinery = get_refinery_by_name(refineries, name)
+
+        refinery.current_stock = stock
+
+
+
+
+
+    
