@@ -73,7 +73,7 @@ def generate_random_csv(filename, num_rows):
             writer.writerow([row_id, customer_id, quantity, post_day_val, start_delivery_day, end_delivery_day])
 
 
-filename = "train_1.csv"
-num_rows = 1542
-generate_random_csv(filename, num_rows)
+# filename = "train_1.csv"
+# num_rows = 1542
+# generate_random_csv(filename, num_rows)
 
