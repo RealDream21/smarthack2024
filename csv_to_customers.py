@@ -1,3 +1,4 @@
+import os
 import csv
 
 class Customer:
@@ -18,7 +19,7 @@ def read_customers_from_csv():
     customers = []
     path = os.getcwd()
     path = os.path.join(path, 'data')
-    path = os.path.join(path,'tanks.csv')
+    path = os.path.join(path,'customers.csv')
     with open(path, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
         for row in reader:
