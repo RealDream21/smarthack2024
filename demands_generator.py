@@ -33,7 +33,7 @@ def get_post_days():
 def generate_quantities():
     size = 1542
     # Define ranges and their weights
-    weights = [0.7, 0.2, 0.09, 0.01]  # 70% chance for 100-900, 20% for 901-3000, 10% for 3001-9000
+    weights = [0.7, 0.2, 0.09, 0.01]  
     ranges = [(100, 900), (901, 3000), (3001, 6000), (6001, 9000)]
     
     # Generate random numbers

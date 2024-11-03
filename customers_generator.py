@@ -1,5 +1,4 @@
 import csv
-import uuid
 import random
 
 # luam id urile clientilor:
